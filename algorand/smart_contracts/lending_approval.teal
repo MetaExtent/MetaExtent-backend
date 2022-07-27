@@ -1,0 +1,90 @@
+#pragma version 5
+txn ApplicationID
+int 0
+==
+bnz main_l8
+txna ApplicationArgs 0
+byte "initializeEscrow"
+==
+bnz main_l7
+txna ApplicationArgs 0
+byte "makeBorrowOffer"
+==
+bnz main_l4
+err
+main_l4:
+global GroupSize
+int 1
+==
+byte "APP_STATE"
+app_global_get
+int 1
+==
+byte "APP_STATE"
+app_global_get
+int 2
+==
+||
+&&
+txn Sender
+byte "APP_ADMIN"
+app_global_get
+==
+&&
+txn NumAppArgs
+int 2
+==
+&&
+bnz main_l6
+int 0
+return
+main_l6:
+byte "ASA_PRICE"
+txna ApplicationArgs 1
+btoi
+app_global_put
+byte "APP_STATE"
+int 2
+app_global_put
+int 1
+return
+main_l7:
+int 0
+byte "ESCROW_ADDRESS"
+app_global_get_ex
+store 0
+store 1
+load 0
+int 0
+==
+assert
+byte "APP_ADMIN"
+app_global_get
+txn Sender
+==
+assert
+global GroupSize
+int 1
+==
+assert
+byte "ESCROW_ADDRESS"
+txna ApplicationArgs 1
+app_global_put
+byte "APP_STATE"
+int 1
+app_global_put
+int 1
+return
+main_l8:
+txn NumAppArgs
+int 2
+==
+assert
+byte "APP_STATE"
+int 0
+app_global_put
+byte "APP_ADMIN"
+txna ApplicationArgs 1
+app_global_put
+int 1
+return
